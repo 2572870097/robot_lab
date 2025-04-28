@@ -49,7 +49,7 @@ memory:
 # https://skrl.readthedocs.io/en/latest/api/memories/random.html
 motion_dataset:
   class: RandomMemory
-  memory_size: 200000
+  memory_size: 400000
 
 # AMP memory (preventing discriminator overfitting)
 # https://skrl.readthedocs.io/en/latest/api/memories/random.html
@@ -86,12 +86,12 @@ agent:
   value_loss_scale: 2.5
   discriminator_loss_scale: 5.0
   amp_batch_size: 512
-  task_reward_weight: 5.0
-  style_reward_weight: 3.0
+  task_reward_weight: 0.0
+  style_reward_weight: 5.0
   discriminator_batch_size: 4096
-  discriminator_reward_scale: 2.0
-  discriminator_logit_regularization_scale: 0.1
-  discriminator_gradient_penalty_scale: 5.0
+  discriminator_reward_scale: 3.0
+  discriminator_logit_regularization_scale: 0.5
+  discriminator_gradient_penalty_scale: 10.0
   discriminator_weight_decay_scale: 1.0e-03
   # rewards_shaper_scale: 1.0
   time_limit_bootstrap: False
@@ -107,5 +107,5 @@ agent:
 # https://skrl.readthedocs.io/en/latest/api/trainers/sequential.html
 trainer:
   class: SequentialTrainer
-  timesteps: 50000
+  timesteps: 500000
   environment_info: log
