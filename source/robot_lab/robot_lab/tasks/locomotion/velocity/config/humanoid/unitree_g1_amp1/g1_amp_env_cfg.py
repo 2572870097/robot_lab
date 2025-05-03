@@ -35,7 +35,7 @@ class G1AmpEnvCfg(DirectRLEnvCfg):
     
     episode_length_s = 10.0
 
-    decimation = 2
+    decimation = 4
 
 
     # spaces
@@ -43,7 +43,7 @@ class G1AmpEnvCfg(DirectRLEnvCfg):
     observation_space =  71 + 3 * 10
     action_space = 29
     state_space = 0
-    num_amp_observations = 5
+    num_amp_observations = 8
     # amp_observation_space = 71 + 3 * 29
     amp_observation_space = 71 + 3 * 10
 
@@ -62,7 +62,7 @@ class G1AmpEnvCfg(DirectRLEnvCfg):
 
     # simulation
     sim: SimulationCfg = SimulationCfg(
-        dt=1 / 120,
+        dt=1 / 200,
         render_interval=decimation,
         physx=PhysxCfg(
             gpu_found_lost_pairs_capacity=2**23,

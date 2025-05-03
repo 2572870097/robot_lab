@@ -86,12 +86,12 @@ agent:
   value_loss_scale: 2.5
   discriminator_loss_scale: 5.0
   amp_batch_size: 512
-  task_reward_weight: 0.0
-  style_reward_weight: 5.0
+  task_reward_weight: 0.5
+  style_reward_weight: 8.0
   discriminator_batch_size: 4096
   discriminator_reward_scale: 3.0
   discriminator_logit_regularization_scale: 0.5
-  discriminator_gradient_penalty_scale: 10.0
+  discriminator_gradient_penalty_scale: 13.0
   discriminator_weight_decay_scale: 1.0e-03
   # rewards_shaper_scale: 1.0
   time_limit_bootstrap: False

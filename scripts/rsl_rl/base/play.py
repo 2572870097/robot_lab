@@ -28,7 +28,7 @@ parser.add_argument(
     "--disable_fabric", action="store_true", default=False, help="Disable fabric and use USD I/O operations."
 )
 parser.add_argument("--num_envs", type=int, default=None, help="Number of environments to simulate.")
-parser.add_argument("--task", type=str, default=None, help="Name of the task.")
+parser.add_argument("--task", type=str, default="RobotLab-Isaac-Velocity-Rough-Unitree-Go2-v0", help="Name of the task.")
 parser.add_argument(
     "--use_pretrained_checkpoint",
     action="store_true",
@@ -79,7 +79,7 @@ def main():
     agent_cfg: RslRlOnPolicyRunnerCfg = cli_args.parse_rsl_rl_cfg(args_cli.task, args_cli)
 
     # make a smaller scene for play
-    env_cfg.scene.num_envs = 50
+    env_cfg.scene.num_envs = 10
     # spawn the robot randomly in the grid (instead of their terrain levels)
     env_cfg.scene.terrain.max_init_terrain_level = None
     # reduce the number of terrains to save memory
@@ -143,7 +143,7 @@ def main():
         env = gym.wrappers.RecordVideo(env, **video_kwargs)
 
     # wrap around environment for rsl-rl
-    env = RslRlVecEnvWrapper(env, clip_actions=agent_cfg.clip_actions)
+    env = RslRlVecEnvWrapper(env)
 
     print(f"[INFO]: Loading model checkpoint from: {resume_path}")
     # load previously trained model
@@ -153,31 +153,22 @@ def main():
     # obtain the trained policy for inference
     policy = ppo_runner.get_inference_policy(device=env.unwrapped.device)
 
-    # extract the neural network module
-    # we do this in a try-except to maintain backwards compatibility.
-    try:
-        # version 2.3 onwards
-        policy_nn = ppo_runner.alg.policy
-    except AttributeError:
-        # version 2.2 and below
-        policy_nn = ppo_runner.alg.actor_critic
-
     # export policy to onnx/jit
     export_model_dir = os.path.join(os.path.dirname(resume_path), "exported")
     export_policy_as_onnx(
-        policy=policy_nn,
+        actor_critic=ppo_runner.alg.actor_critic,
         normalizer=ppo_runner.obs_normalizer,
         path=export_model_dir,
         filename="policy.onnx",
     )
     export_policy_as_jit(
-        policy=policy_nn,
+        actor_critic=ppo_runner.alg.actor_critic,
         normalizer=ppo_runner.obs_normalizer,
         path=export_model_dir,
         filename="policy.pt",
     )
 
-    dt = env.unwrapped.step_dt
+    dt = env.unwrapped.physics_dt
 
     # reset environment
     obs, _ = env.get_observations()
